@@ -333,6 +333,7 @@ const RANK_INDUSTRIAL = [
 
 // === ESTADO ===
 let segment = null; // 'residencial' o 'industrial'
+let resultSubmitted = false; // evita envíos duplicados al backend
 let qs = []; // se asigna según segmento
 let step = 0;
 let sel = {};
@@ -565,7 +566,7 @@ function renderRanking(){
     <div class="q-hint">Arrastra para ordenar de <strong>más</strong> a <strong>menos importante</strong>. La posición 1 es lo que más pesa en tu decisión de compra.</div>
     <div class="rank-hint-banner">💡 <strong>Toca y mantén</strong> sobre un atributo para arrastrarlo. Suelta encima de otro para intercambiar la posición.</div>
     <div class="rank-list" id="rank-list">${itemsHtml}</div>
-    <button class="next-btn" onclick="showNameScreen()">CONFIRMAR Y VER RESULTADO →</button>`;
+    <button class="next-btn" id="rank-confirm-btn" onclick="this.disabled=true; this.textContent='PROCESANDO...'; showNameScreen();">CONFIRMAR Y VER RESULTADO →</button>`;
 }
 
 // Drag & drop desktop
@@ -647,7 +648,10 @@ function onTouchEnd(e){
 function showNameScreen(){
   showResult();
 }
-function submitData(){ showResult(); }
+function submitData(){
+  if(resultSubmitted) return;
+  showResult();
+}
 
 // === SCREEN 6: RESULTADO ===
 async function showResult(){
@@ -655,6 +659,10 @@ async function showResult(){
   document.getElementById('rarea').style.display='block';
   document.getElementById('sbadge').textContent='✓';
   document.getElementById('pfill').style.width='100%';
+
+  // Si ya se mostró/guardó este resultado, no recalcular ni reenviar
+  if(resultSubmitted) return;
+  resultSubmitted = true;
 
   const d = delta();
   const fp = (BASE_PRICE+d).toFixed(3).replace('.',',');
@@ -732,7 +740,7 @@ async function showResult(){
 }
 
 function restart(){
-  segment = null; step = 0; sel = {}; rankList = []; installerName = ''; installerCompany = '';
+  segment = null; step = 0; sel = {}; rankList = []; installerName = ''; installerCompany = ''; resultSubmitted = false;
   ['welcomearea','segarea','qarea','rankarea','namearea','rarea'].forEach(id=>document.getElementById(id).style.display='none');
   showWelcome();
 }
