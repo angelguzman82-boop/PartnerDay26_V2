@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard · Partner Day SunPower 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html{font-size:16px}
+body{font-family:'Lexend Deca',sans-serif;background:#f2f2f2;min-height:100vh;color:#111}
+#app{width:100%;max-width:1600px;margin:0 auto;padding-bottom:60px}
+
+/* Header */
+.hdr{background:#71257F;padding:18px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:20;box-shadow:0 2px 10px rgba(0,0,0,.15);flex-wrap:wrap;gap:10px}
+.hdr-left{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.logo{font-weight:700;font-size:18px;color:#FFDF00;letter-spacing:2px}
+.hdr-title{font-size:13px;color:rgba(255,255,255,.8);font-weight:300}
+.hdr-right{display:flex;align-items:center;gap:12px}
+.live-dot{width:9px;height:9px;border-radius:50%;background:#A6C247;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.live-label{font-size:11px;color:#fff;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
+.refresh-info{font-size:11px;color:rgba(255,255,255,.6)}
+.refresh-btn{background:#FFDF00;color:#000;border:none;border-radius:8px;padding:8px 16px;font-family:'Lexend Deca',sans-serif;font-weight:700;font-size:12px;cursor:pointer;letter-spacing:.5px;text-transform:uppercase}
+.refresh-btn:active{transform:scale(.96)}
+
+.content{padding:22px 18px}
+
+/* Global KPI strip (totales combinados) */
+.global-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px;margin-bottom:22px}
+.gk-card{background:#292929;border-radius:12px;padding:14px 18px;color:#fff}
+.gk-label{font-size:10px;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;font-weight:700}
+.gk-value{font-size:24px;font-weight:700;color:#FFDF00}
+
+/* Two-column layout */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+@media (max-width:980px){.two-col{grid-template-columns:1fr}}
+
+.seg-column{background:#fff;border-radius:16px;border:2px solid #eee;overflow:hidden}
+.seg-column.residencial{border-color:#71257F}
+.seg-column.industrial{border-color:#DC2D81}
+
+.seg-header{padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+.seg-header.residencial{background:#71257F}
+.seg-header.industrial{background:#DC2D81}
+.seg-header-title{font-size:16px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.seg-header-count{background:rgba(255,255,255,.2);color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:14px}
+
+.seg-body{padding:18px}
+
+/* KPI mini grid inside column */
+.kpi-mini-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:18px}
+.kpi-mini{background:#f8f8f8;border-radius:10px;padding:12px 14px}
+.kpi-mini-label{font-size:9.5px;color:#999;text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin-bottom:4px}
+.kpi-mini-value{font-size:19px;font-weight:700;color:#222;line-height:1.1}
+.kpi-mini-value.accent-res{color:#71257F}
+.kpi-mini-value.accent-ind{color:#DC2D81}
+.kpi-mini-sub{font-size:9.5px;color:#bbb;margin-top:2px}
+
+/* Section titles inside column */
+.col-sec-title{font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin:18px 0 10px;display:flex;align-items:center;gap:6px}
+.col-sec-title:first-child{margin-top:0}
+.col-sec-title .dot{width:6px;height:6px;border-radius:50%}
+.dot-res{background:#71257F}
+.dot-ind{background:#DC2D81}
+
+/* Ranking rows (compact) */
+.rank-row-mini{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.rank-row-mini:last-child{margin-bottom:0}
+.rank-pos{width:20px;height:20px;border-radius:50%;font-size:10px;font-weight:700;color:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rank-info-mini{flex:1;min-width:0}
+.rank-name-mini{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:#222;margin-bottom:3px}
+.rank-name-mini span.score{font-weight:700;font-size:11px}
+.rank-bar-bg-mini{height:7px;background:#f0f0f0;border-radius:4px;overflow:hidden}
+.rank-bar-fill-mini{height:100%;border-radius:4px;transition:width .6s ease}
+
+/* Distribution bars compact */
+.dist-block{margin-bottom:16px}
+.dist-title{font-size:11.5px;font-weight:700;color:#555;margin-bottom:8px}
+.bar-row-mini{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.bar-label-mini{font-size:10.5px;color:#666;width:90px;flex-shrink:0;text-align:right;line-height:1.2}
+.bar-track-mini{flex:1;height:18px;background:#f5f5f5;border-radius:5px;overflow:hidden;position:relative}
+.bar-fill-mini{height:100%;border-radius:5px;display:flex;align-items:center;justify-content:flex-end;padding-right:6px;transition:width .5s ease}
+.bar-fill-mini span{font-size:9.5px;color:#fff;font-weight:700}
+.bar-fill-mini.low span{color:#666}
+
+/* Mini table */
+.mini-table-wrap{overflow-x:auto;border-radius:10px;border:1px solid #eee;max-height:280px;overflow-y:auto}
+.mini-table{width:100%;border-collapse:collapse;font-size:10.5px}
+.mini-table th{position:sticky;top:0;background:#f0f0f0;color:#666;text-align:left;padding:7px 9px;font-weight:700;font-size:9.5px;text-transform:uppercase;white-space:nowrap;border-bottom:1px solid #ddd}
+.mini-table td{padding:7px 9px;border-bottom:1px solid #f3f3f3;white-space:nowrap;color:#333}
+.mini-table tr:last-child td{border-bottom:none}
+.mini-table tr:hover td{background:#fafafa}
+.price-cell-mini{font-weight:700}
+.price-res{color:#71257F}
+.price-ind{color:#DC2D81}
+
+.state-box-mini{padding:40px 16px;text-align:center;color:#999;font-size:13px}
+.state-box-mini .big-emoji{font-size:32px;margin-bottom:10px;display:block}
+
+.error-box{background:#fff3f3;border:1px solid #ffd6d6;border-radius:12px;padding:16px 20px;color:#c0392b;font-size:13px;margin-bottom:20px}
+.error-box strong{display:block;margin-bottom:4px}
+
+footer{text-align:center;font-size:11px;color:#bbb;padding:20px;line-height:1.6}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="hdr">
+    <div class="hdr-left">
+      <span class="logo">SUNPOWER</span>
+      <span class="hdr-title">Dashboard · Partner Day Barcelona 2026</span>
+    </div>
+    <div class="hdr-right">
+      <span class="live-dot"></span>
+      <span class="live-label">En vivo</span>
+      <span class="refresh-info" id="refresh-info">—</span>
+      <button class="refresh-btn" onclick="loadData()">↻ Actualizar</button>
+    </div>
+  </div>
+  <div class="content" id="content">
+    <div class="state-box-mini"><span class="big-emoji">⏳</span>Cargando respuestas…</div>
+  </div>
+  <footer>Dashboard conectado en vivo a JSONBin · Se actualiza automáticamente cada 15 segundos<br>Partner Day SunPower · Barcelona, 2–3 julio 2026</footer>
+</div>
+
+<script>
+const JSONBIN_KEY = "$2a$10$OzmEbFf894axitPqkgWb.OUTKCUQ76nd8gX7t2/NgsdxpuAYmfnMK";
+const JSONBIN_BIN = "6a2ae341da38895dfeaee543";
+const AUTO_REFRESH_MS = 15000;
+
+let allData = [];
+
+const RANK_META = {
+  precio:     {icon:'💶', label:'Precio'},
+  eficiencia: {icon:'⚡', label:'Eficiencia / Producción'},
+  estetica:   {icon:'🎨', label:'Estética'},
+  garantia:   {icon:'🛡️', label:'Garantía'},
+  seguridad:  {icon:'🔥', label:'Seguridad'},
+  servicio:   {icon:'🔧', label:'Servicio pre/postventa'},
+};
+
+const RANK_COLORS = ['#DC2D81','#71257F','#9b4fa8','#b87fc4','#d4aee0'];
+
+async function loadData(){
+  try{
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_BIN}/latest`, {
+      headers: { "X-Master-Key": JSONBIN_KEY, "X-Bin-Meta": "false" },
+      cache: "no-store"
+    });
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const record = await res.json();
+    allData = Array.isArray(record) ? record : (Array.isArray(record.responses) ? record.responses : []);
+    allData = allData.filter(r => !r.test);
+    render();
+    document.getElementById('refresh-info').textContent = `Actualizado ${new Date().toLocaleTimeString('es-ES')}`;
+  }catch(e){
+    document.getElementById('content').innerHTML = `
+      <div class="error-box">
+        <strong>No se ha podido conectar con JSONBin</strong>
+        ${e.message} — prueba este archivo en un navegador real (no en este preview), revisa que el bin esté en modo público y que la Master Key sea correcta.
+      </div>`;
+    console.error(e);
+  }
+}
+
+function render(){
+  const total = allData.length;
+  const resData = allData.filter(r=>r.segment==='residencial');
+  const indData = allData.filter(r=>r.segment==='industrial');
+
+  let html = `
+    <div class="global-strip">
+      <div class="gk-card">
+        <div class="gk-label">Total respuestas</div>
+        <div class="gk-value">${total}</div>
+      </div>
+      <div class="gk-card">
+        <div class="gk-label">Empresas distintas</div>
+        <div class="gk-value">${new Set(allData.map(r=>r.company).filter(Boolean)).size}</div>
+      </div>
+      <div class="gk-card">
+        <div class="gk-label">🏠 Residencial</div>
+        <div class="gk-value">${resData.length}</div>
+      </div>
+      <div class="gk-card">
+        <div class="gk-label">🏭 Industrial</div>
+        <div class="gk-value">${indData.length}</div>
+      </div>
+    </div>
+    <div class="two-col">
+      ${renderColumn('residencial', resData)}
+      ${renderColumn('industrial', indData)}
+    </div>`;
+
+  document.getElementById('content').innerHTML = html;
+}
+
+function renderColumn(segment, data){
+  const isRes = segment === 'residencial';
+  const icon = isRes ? '🏠' : '🏭';
+  const label = isRes ? 'Residencial' : 'Industrial';
+  const dotClass = isRes ? 'dot-res' : 'dot-ind';
+  const accentClass = isRes ? 'accent-res' : 'accent-ind';
+  const priceClass = isRes ? 'price-res' : 'price-ind';
+
+  if(data.length === 0){
+    return `
+      <div class="seg-column ${segment}">
+        <div class="seg-header ${segment}">
+          <div class="seg-header-title">${icon} ${label}</div>
+          <div class="seg-header-count">0</div>
+        </div>
+        <div class="seg-body">
+          <div class="state-box-mini"><span class="big-emoji">📭</span>Sin respuestas todavía en este segmento.</div>
+        </div>
+      </div>`;
+  }
+
+  const prices = data.map(r=>parseFloat(r.price_eur_w)).filter(n=>!isNaN(n));
+  const avgPrice = prices.length ? (prices.reduce((a,b)=>a+b,0)/prices.length) : 0;
+  const minPrice = prices.length ? Math.min(...prices) : 0;
+  const maxPrice = prices.length ? Math.max(...prices) : 0;
+
+  const panelCounts = {};
+  data.forEach(r => { const p = r.panel || 'Sin definir'; panelCounts[p] = (panelCounts[p]||0)+1; });
+  const topPanel = Object.entries(panelCounts).sort((a,b)=>b[1]-a[1])[0];
+
+  let html = `
+    <div class="seg-column ${segment}">
+      <div class="seg-header ${segment}">
+        <div class="seg-header-title">${icon} ${label}</div>
+        <div class="seg-header-count">${data.length} respuesta${data.length!==1?'s':''}</div>
+      </div>
+      <div class="seg-body">
+
+        <div class="kpi-mini-grid">
+          <div class="kpi-mini">
+            <div class="kpi-mini-label">Precio medio</div>
+            <div class="kpi-mini-value ${accentClass}">${avgPrice.toFixed(3).replace('.',',')} €/W</div>
+            <div class="kpi-mini-sub">rango ${minPrice.toFixed(3).replace('.',',')}–${maxPrice.toFixed(3).replace('.',',')}</div>
+          </div>
+          <div class="kpi-mini">
+            <div class="kpi-mini-label">Panel top</div>
+            <div class="kpi-mini-value" style="font-size:12px;line-height:1.3">${topPanel ? topPanel[0] : '—'}</div>
+            <div class="kpi-mini-sub">${topPanel ? topPanel[1] : 0} de ${data.length}</div>
+          </div>
+        </div>
+
+        <div class="col-sec-title"><span class="dot ${dotClass}"></span>Prioridades (ranking agregado)</div>
+        ${renderRankingMini(data)}
+
+        <div class="col-sec-title"><span class="dot ${dotClass}"></span>Configuraciones elegidas</div>
+        ${renderDistMini(data, 'size', 'Formato', segment)}
+        ${renderDistMini(data, 'fire', 'Clasificación fuego', segment)}
+        ${renderDistMini(data, 'warranty_product', 'Garantía producto', segment)}
+        ${isRes ? renderDistMini(data, 'backsheet', 'Backsheet', segment) : renderDistMini(data, 'bifacial', 'Bifacialidad', segment)}
+
+        <div class="col-sec-title"><span class="dot ${dotClass}"></span>Respuestas individuales</div>
+        ${renderTableMini(data, priceClass)}
+
+      </div>
+    </div>`;
+
+  return html;
+}
+
+function renderRankingMini(data){
+  const scores = {}, counts = {};
+  data.forEach(r => {
+    (r.ranking||[]).forEach(item => {
+      const attr = item.attribute, pos = item.position;
+      const points = 6 - pos;
+      scores[attr] = (scores[attr]||0) + points;
+      counts[attr] = (counts[attr]||0) + 1;
+    });
+  });
+  const attrs = Object.keys(scores);
+  if(attrs.length === 0) return `<div style="font-size:11px;color:#bbb;padding:6px 0">Sin datos de ranking</div>`;
+
+  const maxScore = Math.max(...attrs.map(a=>scores[a]));
+  const ranked = attrs.map(a => ({
+    attr: a,
+    avgScore: scores[a]/(counts[a]||1),
+    totalScore: scores[a],
+    meta: RANK_META[a] || {icon:'•', label:a}
+  })).sort((a,b)=>b.totalScore-a.totalScore);
+
+  return ranked.map((r,i) => {
+    const pct = (r.totalScore/maxScore*100).toFixed(0);
+    const color = RANK_COLORS[i] || '#ccc';
+    return `
+      <div class="rank-row-mini">
+        <div class="rank-pos" style="background:${color}">${i+1}</div>
+        <div class="rank-info-mini">
+          <div class="rank-name-mini"><span>${r.meta.icon} ${r.meta.label}</span><span class="score" style="color:${color}">${r.avgScore.toFixed(1)}/5</span></div>
+          <div class="rank-bar-bg-mini"><div class="rank-bar-fill-mini" style="width:${pct}%;background:${color}"></div></div>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function renderDistMini(data, field, title, segment){
+  const counts = {};
+  data.forEach(r => {
+    const val = r.selections?.[field] || 'Sin definir';
+    counts[val] = (counts[val]||0)+1;
+  });
+  const max = Math.max(...Object.values(counts));
+  const entries = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  const fillColor = segment === 'residencial' ? '#71257F' : '#DC2D81';
+
+  const bars = entries.map(([label,count]) => {
+    const widthPct = (count/max*100);
+    const lowFill = widthPct < 30 ? 'low' : '';
+    return `
+      <div class="bar-row-mini">
+        <div class="bar-label-mini">${label}</div>
+        <div class="bar-track-mini">
+          <div class="bar-fill-mini ${lowFill}" style="width:${widthPct}%;background:${fillColor}">
+            <span>${count}</span>
+          </div>
+        </div>
+      </div>`;
+  }).join('');
+
+  return `<div class="dist-block"><div class="dist-title">${title}</div>${bars}</div>`;
+}
+
+function renderTableMini(data, priceClass){
+  const sorted = [...data].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+  const rows = sorted.map(r => {
+    const date = r.timestamp ? new Date(r.timestamp).toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—';
+    const top1 = (r.ranking||[]).find(x=>x.position===1);
+    const top1Label = top1 ? (RANK_META[top1.attribute]?.label || top1.title) : '—';
+    return `
+      <tr>
+        <td>${date}</td>
+        <td>${r.company || '<span style="color:#ccc">—</span>'}</td>
+        <td>${r.name || '<span style="color:#ccc">—</span>'}</td>
+        <td class="price-cell-mini ${priceClass}">${r.price_eur_w ? r.price_eur_w.replace('.',',')+' €/W' : '—'}</td>
+        <td>${r.selections?.size || '—'}</td>
+        <td>🥇 ${top1Label}</td>
+      </tr>`;
+  }).join('');
+
+  return `
+    <div class="mini-table-wrap">
+      <table class="mini-table">
+        <thead><tr><th>Fecha</th><th>Empresa</th><th>Nombre</th><th>Precio</th><th>Formato</th><th>Top prioridad</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+loadData();
+setInterval(loadData, AUTO_REFRESH_MS);
+</script>
+</body>
+</html>
